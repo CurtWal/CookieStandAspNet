@@ -1,6 +1,6 @@
 import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
-import { CookieStand } from "./components/CookieStand";
+import CookieStand from "./components/CookieStand";
 import { Home } from "./components/Home";
 
 const AppRoutes = [
@@ -18,7 +18,7 @@ const AppRoutes = [
     },
   {
     path: '/cookieStand',
-    element: <CookieStand />
+    element: <CookieStand/>
     }
 ];
 

@@ -8,69 +8,95 @@ using Microsoft.EntityFrameworkCore;
 using CookieStandAspNet.Data;
 using CookieStandAspNet.Models;
 
-namespace CookieStandAspNet.Api
+namespace CookieStandAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CookieStandController : ControllerBase
+    public class CookieStandController : Controller
     {
-        private readonly ICookieStand _context;
-
-        public CookieStandController(ICookieStand c)
+        private readonly CookieStandDbContext _context;
+        public CookieStandController(CookieStandDbContext context)
         {
-            _context = c;
+            _context = context;
+        }
+        public string Index()
+        {
+            //return View();
+            return "This is the index route";
         }
 
-        // GET: api/CookieStand
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CookieStand>>> GetCookieStands()
+        // post route
+        [HttpPost]
+        [Route("api/cookiestand")]
+        public async Task<IActionResult> CreateCookieStand(CookieStand cookieStand)
         {
-            // You should count the list ...
-            var list = await _context.GetCookieStands();
-            return Ok(list);
-        }
-
-        // GET: api/CookieStand/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CookieStand>> GetCookieStand(int id)
-        {
-            CookieStand cookieStand = await _context.GetCookieStand(id);
-            return cookieStand;
-        }
-
-        // PUT: api/CookieStand/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Create(int id, CookieStand cookieStand)
-        {
-            if (id != cookieStand.Id)
+            if (cookieStand.Description == null)
             {
-                return BadRequest();
+                cookieStand.Description = "";
             }
 
-            var updatedCookieStand = await _context.UpdateCookieStand(id, cookieStand);
+            if (ModelState.IsValid)
+            {
+                _context.CookieStand.Add(cookieStand);
+                await _context.SaveChangesAsync();
 
-            return Ok(updatedCookieStand);
+                return CreatedAtAction(nameof(GetCookieStand), new { id = cookieStand.Id }, cookieStand);
+            }
+            return StatusCode(500);
         }
 
-        // POST: api/CookieStand
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<CookieStand>> UpdateAmenitie(CookieStand cookieStand)
+        [HttpGet]
+        [Route("api/cookiestand/{id}")]
+        public CookieStand GetCookieStand(string id)
         {
-            await _context.Create(cookieStand);
+            var cookiestand = _context.CookieStand.FirstOrDefault(x => x.Id == id);
 
-            // Return a 201 Header to browser
-            // The body of the request will be us running GetTechnology(id);
-            return CreatedAtAction("GetAmenitie", new { id = cookieStand.Id }, cookieStand);
+            if (cookiestand == null)
+            {
+                return null;
+            }
+
+            return cookiestand;
         }
 
-        // DELETE: api/CookieStand/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet]
+        [Route("api/cookiestands")]
+        public IEnumerable<CookieStand> GetCookieStands()
         {
-            await _context.Delete(id);
-            return NoContent();
+            var cookieStands = _context.CookieStand.ToArray();
+
+            return cookieStands;
+        }
+
+        [HttpPut]
+        [Route("api/cookiestand/{id}")]
+        public CookieStand UpdateCookieStand(string id, [FromBody] CookieStand cookieStand)
+        {
+            var chosenCS = _context.CookieStand.Where(cs => cs.Id == id).FirstOrDefault();
+            if (chosenCS == null)
+                return null;
+
+            chosenCS.Location = cookieStand.Location;
+            chosenCS.Minimum_Customers_Per_Hour = cookieStand.Minimum_Customers_Per_Hour;
+            chosenCS.Maximum_Customers_Per_Hour = cookieStand.Maximum_Customers_Per_Hour;
+            chosenCS.Average_Cookies_Per_Sale = cookieStand.Maximum_Customers_Per_Hour;
+            chosenCS.Owner = cookieStand.Owner;
+            chosenCS.Description = cookieStand.Description;
+
+            _context.Entry(chosenCS).State = EntityState.Modified;
+            _context.SaveChangesAsync();
+
+            return chosenCS;
+        }
+
+        [HttpDelete]
+        [Route("api/cookiestand/{id}")]
+        public async void DeleteCookieStand(string id)
+        {
+            var chosenCS = _context.CookieStand.Where(cs => cs.Id == id).FirstOrDefault();
+            if (chosenCS != null)
+            {
+                _context.CookieStand.Remove(chosenCS);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

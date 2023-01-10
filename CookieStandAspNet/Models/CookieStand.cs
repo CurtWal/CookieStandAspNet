@@ -2,14 +2,16 @@
 {
     public class CookieStand
     {
-        public int Id { get; set; }
-        public string location { get; set; }
-        public string description { get; set; }
-        public int minimum_customers_per_hour { get; set; }
-        public int maximum_customers_per_hour { get; set; }
-        public decimal average_cookies_per_sale { get; set; }
-        public string owner { get; set; }
-       // public int hourly_sales { get; set; }
-
+        public CookieStand()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+        public string Id { get; private set; }
+        public string Location { get; set; }
+        public string? Description { get; set; }
+        public int Minimum_Customers_Per_Hour { get; set; }
+        public int Maximum_Customers_Per_Hour { get; set; }
+        public decimal Average_Cookies_Per_Sale { get; set; }
+        public string? Owner { get; set; }
     }
 }

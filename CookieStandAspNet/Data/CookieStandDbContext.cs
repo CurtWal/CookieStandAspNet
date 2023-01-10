@@ -22,7 +22,7 @@ namespace CookieStandAspNet.Data
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
-            modelBuilder.Entity<CookieStand>().HasData(new CookieStand { Id = 336, location = "Barcelona", description = "", minimum_customers_per_hour = 3, maximum_customers_per_hour = 7, average_cookies_per_sale = 2.5m, owner = "NULL" });
+            modelBuilder.Entity<CookieStand>().HasData(new CookieStand {Location = "Barcelona", Description = "", Minimum_Customers_Per_Hour = 3, Maximum_Customers_Per_Hour = 7, Average_Cookies_Per_Sale = 2.5m });
 
         }
     }
